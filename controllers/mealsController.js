@@ -22,7 +22,7 @@ const createMeals = catchAsync(async (req, res, next) => {
 const getAllMeals = catchAsync(async (req, res, next) => {
   const meals = await Meals.findAll({
     where: { status: 'active' },
-    include: { model: Restaurant },
+    include: [{ model: Restaurant }],
   });
 
   res.status(200).json({ meals });
@@ -33,7 +33,7 @@ const getMealsById = catchAsync(async (req, res, next) => {
 
   const meal = await Meals.findOne({
     where: { status: 'active', id: mealId },
-    include: { model: Restaurant },
+    include: [{ model: Restaurant }],
   });
 
   res.status(200).json({ meal });

@@ -10,6 +10,7 @@ const { Meals } = require('../models/mealModel');
 
 // UTILS
 const { catchAsync } = require('../utils/catchAsync');
+const { AppError } = require('../utils/appError');
 
 dotenv.config({ path: './config.env' });
 
@@ -18,8 +19,7 @@ const getAllOrderUser = catchAsync(async (req, res, next) => {
 
   const userOrders = await Order.findAll({
     where: { userId: sessionUser.id },
-    include: { model: Meals },
-    include: { model: Restaurant },
+    include: [{ model: Meals }, { model: Restaurant }],
   });
 
   res.status(200).json({ status: 'success', userOrders });
@@ -29,10 +29,13 @@ const getOrderById = catchAsync(async (req, res, next) => {
   const { sessionUser } = req;
 
   const userOrder = await Order.findOne({
-    where: { userId: sessionUser.id },
-    include: { model: Meals },
-    include: { model: Restaurant },
+    where: { userId: sessionUser.id, status: 'active' },
+    include: [{ model: Meals }, { model: Restaurant }],
   });
+
+  if (!userOrder) {
+    return next(new AppError('order with provided id does not exist', 404));
+  }
 
   res.status(200).json({ status: 'success', userOrder });
 });

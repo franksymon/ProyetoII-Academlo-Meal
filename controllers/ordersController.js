@@ -37,8 +37,7 @@ const getAllOrders = catchAsync(async (req, res, next) => {
 
   const userOrders = await Order.findAll({
     where: { userId: sessionUser.id },
-    include: { model: Meals },
-    include: { model: Restaurant },
+    include: [{ model: Meals }, { model: Restaurant }],
   });
 
   res.status(200).json({ status: 'success', userOrders });
